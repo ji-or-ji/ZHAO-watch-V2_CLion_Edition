@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(Ultra-thin-ZHAO-Watch C ASM) # 项目名可改，必须包含 C 和 ASM
+project(Ultra-thin-ZHAO-Watch-V2 C ASM)
 
 # ==================== 工具链设置 ====================
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR ARM)
 
-# 请根据你的实际安装路径修改！！！！
 set(TOOLCHAIN_PATH "/usr/local/gcc-arm-none-eabi/bin")
 set(CMAKE_C_COMPILER   ${TOOLCHAIN_PATH}/arm-none-eabi-gcc)
 set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PATH}/arm-none-eabi-g++)
@@ -39,14 +38,18 @@ add_compile_options(
 
 # ==================== 包含路径 ====================
 include_directories(
+        # 1. 用户代码目录（User/ 下的 .h）
         User
+        # 2. 系统与硬件层目录
         System
         Hardware
+        # 3. 应用数据与传感器目录
         APPdata
         MPU6050
+        # 4. STM32标准外设库目录
+        Drivers/STM32F10x_StdPeriph_Driver/inc/
         Drivers/CMSIS/Device/ST/STM32F1xx/Include
         Drivers/CMSIS/Include
-        Drivers/STM32F10x_StdPeriph_Driver/inc
 )
 
 # ==================== 链接脚本与链接选项 ====================
@@ -84,6 +87,8 @@ file(GLOB_RECURSE STD_PERIPH_SRCS
 # CMSIS 系统文件
 set(CMSIS_SRCS
         Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f10x.c
+        Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f10x.h
+        Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h
 )
 
 # 用户与应用代码 (递归收集所有 .c 文件)

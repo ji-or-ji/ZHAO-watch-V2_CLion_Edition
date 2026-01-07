@@ -130,7 +130,7 @@
 #define HSI_VALUE    ((uint32_t)8000000) /*!< Value of the Internal oscillator in Hz*/
 
 /**
- * @brief STM32F10x Standard Peripheral Library version number
+ * @brief STM32F10x Standard Peripheral Libraries version number
    */
 #define __STM32F10X_STDPERIPH_VERSION_MAIN   (0x03) /*!< [31:24] main version */                                  
 #define __STM32F10X_STDPERIPH_VERSION_SUB1   (0x05) /*!< [23:16] sub1 version */
@@ -483,7 +483,7 @@ typedef enum IRQn
   * @{
   */  
 
-/*!< STM32F10x Standard Peripheral Library old types (maintained for legacy purpose) */
+/*!< STM32F10x Standard Peripheral Libraries old types (maintained for legacy purpose) */
 typedef int32_t  s32;
 typedef int16_t s16;
 typedef int8_t  s8;
@@ -523,7 +523,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
-/*!< STM32F10x Standard Peripheral Library old definitions (maintained for legacy purpose) */
+/*!< STM32F10x Standard Peripheral Libraries old definitions (maintained for legacy purpose) */
 #define HSEStartUp_TimeOut   HSE_STARTUP_TIMEOUT
 #define HSE_Value            HSE_VALUE
 #define HSI_Value            HSI_VALUE
