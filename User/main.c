@@ -1,40 +1,41 @@
  
-/**	
-  *     每当我试图编写一段优雅的程序
-  *     时而在逻辑的漩涡中打转
-  *     时而在语法的暗礁上碰撞
-  *     结果却总是像一幅抽象画
-  *     令人捧腹却无从理解
-  *     或许，我的能力就像那未解的谜题
-  *     永远在寻找答案的路上
-  *     却总是被自己的思维所困
-  *
-  *		发一下颠，还是菜(っ °Д°;)っ
-  *	
-  *     版本V2.10
-  *		程序写得比较烂，酌情观看哈
-  *     参考(Ctrl+C)了许多大佬的程序，在此表示感谢  o(*￣▽￣...
-  *     如果有电池电压不准的情况请修改Time_page里面的BAT_volt_CAL进行校准，电压比实际多的话调小一点点，反之亦然
-  *		如果编译有警告是正常的，因为有一些变量范围超了，不影响
-  **/
+/**
+ *
+ *     每当我试图编写一段优雅的程序
+ *     时而在逻辑的漩涡中打转
+ *     时而在语法的暗礁上碰撞
+ *     结果却总是像一幅抽象画
+ *     令人捧腹却无从理解
+ *     或许，我的能力就像那未解的谜题
+ *     永远在寻找答案的路上
+ *     却总是被自己的思维所困
+ *
+ *		发一下颠，还是菜(っ °Д°;)っ
+ *
+ *     版本V2.10
+ *		程序写得比较烂，酌情观看哈
+ *     参考(Ctrl+C)了许多大佬的程序，在此表示感谢  o(*￣▽￣...
+ *     如果有电池电压不准的情况请修改Time_page里面的BAT_volt_CAL进行校准，电压比实际多的话调小一点点，反之亦然
+ *		如果编译有警告是正常的，因为有一些变量范围超了，不影响
+ */
 
-#include <stdint.h>
+    //上来就一堆头文件  ;(._. )>
 #include "stm32f10x.h"
 #include "OLED.h"
-#include "Delay.h"
-#include "menu.h"
-#include "AD.h"
-#include "Serial2.h"
-#include "string.h"
-#include "key.h"
-#include "MyRTC.h"
-#include "Time_page.h"
-#include "stm32_power.h" 
-#include "ASR_su_21t.h"
-#include "RF_Ev1527.h"
-#include "AHT20.h"
-#include "MPU6050.h" //上来就一堆头文件  ;(._. )>
-#include "CH7800play.h"
+#include "../System/Delay.h"
+#include "../Drivers/STM32F10x_StdPeriph_Driver/inc/menu.h"
+#include "../Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h"
+#include "../System/Serial2.h"
+//#include "string.h"
+#include "../Drivers/STM32F10x_StdPeriph_Driver/inc/Key.h"
+#include "../System/MyRTC.h"
+#include "../Drivers/STM32F10x_StdPeriph_Driver/inc/Time_page.h"
+#include "../System/stm32_power.h"
+#include "../APPdata/ASR_su_21t.h"
+#include "../APPdata/RF_Ev1527.h"
+#include "../APPdata/AHT20.h"
+#include "../MPU6050/MPU6050.h"
+#include "../APPdata/CH7800play.h"
 
 void STM32_rouse(void);
 
@@ -84,7 +85,7 @@ int main(void)
 		delay_init();		  //延时函数初始化
 
 		OLED_Init();        //oled显示屏初始化
-do_work();   //真的开机动画o(￣▽￣)ｄ
+do_work();                                                         //真的开机动画o(￣▽￣)ｄ
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);      // 开启AFIO时钟
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); //重映射配置,用PB3，PB4，PA15做普通IO，PA13&14用于SWD调试
 

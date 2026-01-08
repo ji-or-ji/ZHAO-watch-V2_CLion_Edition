@@ -1,5 +1,5 @@
 #include "menu.h"
-#include "sys.h"               
+#include "sys.h"
 #include "stm32f10x.h"
 #include <math.h>
 #include "Time_page.h"
@@ -7,21 +7,478 @@
 #include "AHT20.h"
 #include "Calculator.h"
 
-//菜单框架借用了B站UP 加油哦大灰狼 的menu菜单修改而来，在此表示感谢
+// 菜单框架借用了B站UP 加油哦大灰狼 的menu菜单修改而来，在此表示感谢
+// 状态机版本修改说明：
+// 1. 将原轮询逻辑重构为状态机，提高可读性和可维护性
+// 2. 保持输入输出接口完全不变，确保向后兼容
+// 3. 修复了原代码中可能的逻辑缺陷
+// 4. 添加了状态机复位和调试功能
 
-uint8_t d1=15,d2=1,yiup=0,xiup,ytup=0,xtup,s1;
-//上课的时候脑抽想出来的按键识别，居然能用 (需要轮询),实现了点击与长按的识别
-   //按键识别，返回1为下，-1为上  //如果摇杆下拨                                                                                                                                                      //如果摇杆上拨                        																							//您搁这开火车呢？？？(指作者自己)																				
-int8_t menu_Roll_event(void){if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)==1){if(yiup){if(xiup>s1){s1=d2;xiup=0;return 1;}else{xiup++;return 0;}}else{yiup=1;xiup=0;s1=d1;return 1;}}else{yiup=0;}if(GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)==1){if(ytup){if(xtup>s1){s1=d2;xtup=0;return -1;}else{xtup++;return 0;}}else{ytup=1;xtup=0;s1=d1;return -1;}}else{ytup=0;}return 0;}
-																																						//不展开完全没有可读性 o(><；)oo																		//好像展开也读不了多少(+_+)?
+/**
+ * @brief 按键检测时间参数配置
+ * @note d1: 长按识别阈值（单位：函数调用次数）
+ *       数值越大，需要按住更长时间才识别为长按
+ *       d2: 连击触发间隔（单位：函数调用次数）
+ *       数值越大，连击触发频率越低
+ */
+uint8_t d1 = 15; /**< 长按阈值，原值15 */
+uint8_t d2 = 1;  /**< 连击间隔阈值，原值1 */
 
-uint8_t yu=0,xu,upp=0,s2;
+/**
+ * @brief 按键状态机状态定义
+ * @details 使用状态机清晰描述按键的完整生命周期
+ */
+typedef enum {
+    KEY_STATE_IDLE = 0,         /**< 空闲状态：按键未按下 */
+    KEY_STATE_FIRST_PRESS,      /**< 首次按下：检测到按键按下，等待确认短按/长按 */
+    KEY_STATE_REPEAT_TRIGGER,   /**< 重复触发：长按时按固定间隔触发事件 */
+    KEY_STATE_LONG_PRESSED,     /**< 长按已识别：仅用于确认键，表示已触发长按事件 */
+    KEY_STATE_DEBOUNCE          /**< 消抖状态：预留，可用于按键消抖处理 */
+} KeyState_t;
 
-  //按键识别，返回1确定，2长按
-int8_t menu_Enter_event(void){if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_1)==1){if(upp==0){if(yu){if(xu>s2){upp=1;return 2;}else{xu++;return 0;}}else{yu=1;xu=0;s2=d1;return 0;}}else{return 0;}}else{if(yu){if(upp){yu=0;upp=0;return 0;}else{yu=0;return 1;}}return 0;}}
+/**
+ * @brief 按键状态机结构体
+ * @details 每个物理按键对应一个状态机实例
+ */
+typedef struct {
+    KeyState_t current_state; /**< 当前状态 */
+    uint8_t press_counter;    /**< 按下计数器，用于计时 */
+    uint8_t repeat_counter;   /**< 连击计数器，用于控制连击频率 */
+    uint8_t has_pending_event;/**< 事件待处理标志 */
+    int8_t event_value;       /**< 待处理的事件值 */
+    uint8_t debounce_time;    /**< 消抖时间（预留） */
+} KeyFSM_t;
 
-int8_t Speed_Factor = 12;				//光标动画速度系数;
-float  Roll_Speed = 1.3;				   //滚动动画速度系数;
+// 全局按键状态机实例声明
+static KeyFSM_t roll_up_key_fsm;    /**< 上滚动键（PC13）状态机 */
+static KeyFSM_t roll_down_key_fsm;  /**< 下滚动键（PA0）状态机 */
+static KeyFSM_t enter_key_fsm;      /**< 确认键（PA1）状态机 */
+
+// 按键状态机是否已初始化标志
+static uint8_t key_fsms_initialized = 0;
+
+/**
+ * @brief 初始化按键状态机
+ * @param p_fsm 指向要初始化的状态机的指针
+ * @note 将状态机重置为初始状态，所有计数器清零
+ */
+static void key_fsm_init(KeyFSM_t* p_fsm) {
+    if (p_fsm == NULL) {
+        return;
+    }
+
+    p_fsm->current_state = KEY_STATE_IDLE;
+    p_fsm->press_counter = 0;
+    p_fsm->repeat_counter = 0;
+    p_fsm->has_pending_event = 0;
+    p_fsm->event_value = 0;
+    p_fsm->debounce_time = 0;
+}
+
+/**
+ * @brief 初始化所有按键状态机
+ * @note 系统启动时调用，确保状态机处于已知状态
+ */
+static void key_fsms_initialize_all(void) {
+    if (key_fsms_initialized) {
+        return;
+    }
+
+    key_fsm_init(&roll_up_key_fsm);
+    key_fsm_init(&roll_down_key_fsm);
+    key_fsm_init(&enter_key_fsm);
+
+    key_fsms_initialized = 1;
+}
+
+/**
+ * @brief 获取按键GPIO状态
+ * @param gpio_port GPIO端口
+ * @param gpio_pin GPIO引脚
+ * @return uint8_t 1=按键按下（高电平），0=按键释放（低电平）
+ * @note 根据硬件连接，确认按键按下时的电平状态
+ */
+static inline uint8_t get_key_state(GPIO_TypeDef* gpio_port, uint16_t gpio_pin) {
+    return (GPIO_ReadInputDataBit(gpio_port, gpio_pin) == Bit_SET) ? 1 : 0;
+}
+
+/**
+ * @brief 更新滚动键状态机（向上/向下滚动）
+ * @param p_fsm 指向滚动键状态机的指针
+ * @param is_key_pressed 当前按键是否按下
+ * @param event_direction 触发事件时返回的方向值（上=-1，下=1）
+ * @note 实现原代码的完整逻辑：
+ *       1. 首次按下立即触发事件
+ *       2. 长按时先等待d1个周期，然后每d2个周期触发一次
+ *       3. 释放后立即返回空闲状态
+ */
+static void update_roll_key_fsm(KeyFSM_t* p_fsm, uint8_t is_key_pressed, int8_t event_direction) {
+    // 参数检查
+    if (p_fsm == NULL) {
+        return;
+    }
+
+    // 每次调用开始时清除待处理事件标志
+    p_fsm->has_pending_event = 0;
+    p_fsm->event_value = 0;
+
+    // 状态机主逻辑
+    switch (p_fsm->current_state) {
+        case KEY_STATE_IDLE:
+            if (is_key_pressed) {
+                // 按键首次按下：立即触发事件
+                p_fsm->current_state = KEY_STATE_FIRST_PRESS;
+                p_fsm->press_counter = 0;
+                p_fsm->has_pending_event = 1;
+                p_fsm->event_value = event_direction;
+
+                // 调试跟踪：记录状态转移
+                #ifdef KEY_FSM_DEBUG
+                debug_log("Roll key: IDLE -> FIRST_PRESS, event=%d", event_direction);
+                #endif
+            }
+            break;
+
+        case KEY_STATE_FIRST_PRESS:
+            if (is_key_pressed) {
+                // 按键保持按下状态
+                p_fsm->press_counter++;
+
+                if (p_fsm->press_counter >= d1) {
+                    // 达到长按阈值，进入重复触发状态
+                    p_fsm->current_state = KEY_STATE_REPEAT_TRIGGER;
+                    p_fsm->repeat_counter = 0;
+
+                    // 触发第一次重复事件
+                    p_fsm->has_pending_event = 1;
+                    p_fsm->event_value = event_direction;
+
+                    #ifdef KEY_FSM_DEBUG
+                    debug_log("Roll key: FIRST_PRESS -> REPEAT_TRIGGER");
+                    #endif
+                }
+            } else {
+                // 按键已释放，返回空闲状态
+                p_fsm->current_state = KEY_STATE_IDLE;
+
+                #ifdef KEY_FSM_DEBUG
+                debug_log("Roll key: FIRST_PRESS -> IDLE (released)");
+                #endif
+            }
+            break;
+
+        case KEY_STATE_REPEAT_TRIGGER:
+            if (is_key_pressed) {
+                // 按键保持长按状态
+                p_fsm->repeat_counter++;
+
+                if (p_fsm->repeat_counter >= d2) {
+                    // 达到连击间隔，触发事件并重置计数器
+                    p_fsm->repeat_counter = 0;
+                    p_fsm->has_pending_event = 1;
+                    p_fsm->event_value = event_direction;
+                }
+            } else {
+                // 按键释放，返回空闲状态
+                p_fsm->current_state = KEY_STATE_IDLE;
+
+                #ifdef KEY_FSM_DEBUG
+                debug_log("Roll key: REPEAT_TRIGGER -> IDLE (released)");
+                #endif
+            }
+            break;
+
+        default:
+            // 异常状态，重置为IDLE
+            p_fsm->current_state = KEY_STATE_IDLE;
+            break;
+    }
+}
+
+/**
+ * @brief 更新确认键状态机
+ * @param p_fsm 指向确认键状态机的指针
+ * @param is_key_pressed 当前按键是否按下
+ * @note 实现原代码的完整逻辑：
+ *       1. 按下后立即开始计时
+ *       2. 在d1个周期内释放：触发短按事件（返回1）
+ *       3. 按下超过d1个周期：触发长按事件（返回2）
+ *       4. 长按事件只触发一次，直到按键释放
+ */
+static void update_enter_key_fsm(KeyFSM_t* p_fsm, uint8_t is_key_pressed) {
+    // 参数检查
+    if (p_fsm == NULL) {
+        return;
+    }
+
+    // 每次调用开始时清除待处理事件标志
+    p_fsm->has_pending_event = 0;
+    p_fsm->event_value = 0;
+
+    // 状态机主逻辑
+    switch (p_fsm->current_state) {
+        case KEY_STATE_IDLE:
+            if (is_key_pressed) {
+                // 按键首次按下，开始计时但不立即触发事件
+                p_fsm->current_state = KEY_STATE_FIRST_PRESS;
+                p_fsm->press_counter = 0;
+
+                #ifdef KEY_FSM_DEBUG
+                debug_log("Enter key: IDLE -> FIRST_PRESS");
+                #endif
+            }
+            break;
+
+        case KEY_STATE_FIRST_PRESS:
+            if (is_key_pressed) {
+                // 按键保持按下状态，继续计时
+                p_fsm->press_counter++;
+
+                if (p_fsm->press_counter >= d1) {
+                    // 达到长按阈值，触发长按事件
+                    p_fsm->current_state = KEY_STATE_LONG_PRESSED;
+                    p_fsm->has_pending_event = 1;
+                    p_fsm->event_value = 2; // 长按事件值
+
+                    #ifdef KEY_FSM_DEBUG
+                    debug_log("Enter key: FIRST_PRESS -> LONG_PRESSED, event=2");
+                    #endif
+                }
+            } else {
+                // 按键在达到长按阈值前释放，触发短按事件
+                p_fsm->current_state = KEY_STATE_IDLE;
+                p_fsm->has_pending_event = 1;
+                p_fsm->event_value = 1; // 短按事件值
+
+                #ifdef KEY_FSM_DEBUG
+                debug_log("Enter key: FIRST_PRESS -> IDLE, event=1 (short press)");
+                #endif
+            }
+            break;
+
+        case KEY_STATE_LONG_PRESSED:
+            if (!is_key_pressed) {
+                // 长按后按键释放，返回空闲状态
+                p_fsm->current_state = KEY_STATE_IDLE;
+
+                #ifdef KEY_FSM_DEBUG
+                debug_log("Enter key: LONG_PRESSED -> IDLE (released)");
+                #endif
+            }
+            // 长按保持期间不重复触发事件
+            break;
+
+        default:
+            // 异常状态，重置为IDLE
+            p_fsm->current_state = KEY_STATE_IDLE;
+            break;
+    }
+}
+
+/**
+ * @brief 滚动事件检测函数（状态机版本）
+ * @return int8_t 事件返回值：
+ *                -1 = 向上滚动（PC13按下）
+ *                 1 = 向下滚动（PA0按下）
+ *                 0 = 无事件
+ * @note 1. 下拨键（PA0）优先级高于上拨键（PC13），与原逻辑一致
+ *       2. 函数需要定期调用（建议5-20ms调用周期）
+ *       3. 首次按下立即触发，长按时按d2间隔重复触发
+ *       4. 注意：PC13是STM32内置用户按键，通常是低电平有效
+ *          但原代码使用高电平判断，需要确认硬件连接
+ */
+int8_t menu_Roll_event(void) {
+    // 初始化检查
+    if (!key_fsms_initialized) {
+        key_fsms_initialize_all();
+    }
+
+    // 读取GPIO状态
+    // 注意：原代码使用高电平判断按键按下，需要根据实际硬件确认
+    uint8_t is_down_pressed = get_key_state(GPIOA, GPIO_Pin_0);  // PA0: 下拨键
+    uint8_t is_up_pressed = get_key_state(GPIOC, GPIO_Pin_13);   // PC13: 上拨键
+
+    // 更新下拨键状态机（PA0）
+    update_roll_key_fsm(&roll_down_key_fsm, is_down_pressed, 1);
+
+    // 更新上拨键状态机（PC13）
+    update_roll_key_fsm(&roll_up_key_fsm, is_up_pressed, -1);
+
+    // 检查事件（下拨优先于上拨，与原逻辑一致）
+    if (roll_down_key_fsm.has_pending_event) {
+        return roll_down_key_fsm.event_value;
+    }
+
+    if (roll_up_key_fsm.has_pending_event) {
+        return roll_up_key_fsm.event_value;
+    }
+
+    return 0;
+}
+
+/**
+ * @brief 确认事件检测函数（状态机版本）
+ * @return int8_t 事件返回值：
+ *                 1 = 短按确认
+ *                 2 = 长按确认
+ *                 0 = 无事件
+ * @note 1. 检测PA1引脚（确认键）
+ *       2. 短按：按下后在d1个周期内释放
+ *       3. 长按：按下并保持超过d1个周期
+ *       4. 长按事件只触发一次，直到按键释放
+ */
+int8_t menu_Enter_event(void) {
+    // 初始化检查
+    if (!key_fsms_initialized) {
+        key_fsms_initialize_all();
+    }
+
+    // 读取确认键GPIO状态（PA1）
+    uint8_t is_enter_pressed = get_key_state(GPIOA, GPIO_Pin_1);
+
+    // 更新确认键状态机
+    update_enter_key_fsm(&enter_key_fsm, is_enter_pressed);
+
+    // 返回事件值
+    if (enter_key_fsm.has_pending_event) {
+        return enter_key_fsm.event_value;
+    }
+
+    return 0;
+}
+
+/**
+ * @brief 复位所有按键状态机到空闲状态
+ * @note 在以下场景调用：
+ *       1. 菜单切换时
+ *       2. 系统复位后
+ *       3. 进入休眠模式前
+ *       4. 发生异常需要恢复时
+ */
+void menu_reset_all_keys(void) {
+    key_fsm_init(&roll_up_key_fsm);
+    key_fsm_init(&roll_down_key_fsm);
+    key_fsm_init(&enter_key_fsm);
+
+    #ifdef KEY_FSM_DEBUG
+    debug_log("All keys reset to IDLE state");
+    #endif
+}
+
+/**
+ * @brief 获取指定按键的当前状态（调试和监控用）
+ * @param key_id 按键标识：
+ *               0 = 上拨键（PC13）
+ *               1 = 下拨键（PA0）
+ *               2 = 确认键（PA1）
+ * @return KeyState_t 按键的当前状态
+ */
+KeyState_t menu_get_key_state(uint8_t key_id) {
+    switch (key_id) {
+        case 0:
+            return roll_up_key_fsm.current_state;
+        case 1:
+            return roll_down_key_fsm.current_state;
+        case 2:
+            return enter_key_fsm.current_state;
+        default:
+            return KEY_STATE_IDLE;
+    }
+}
+
+/**
+ * @brief 设置按键时间参数
+ * @param long_press_threshold 长按阈值（单位：函数调用次数）
+ * @param repeat_interval 连击间隔（单位：函数调用次数）
+ * @note 允许运行时调整按键灵敏度
+ */
+void menu_set_key_params(uint8_t long_press_threshold, uint8_t repeat_interval) {
+    d1 = long_press_threshold;
+    d2 = repeat_interval;
+
+    #ifdef KEY_FSM_DEBUG
+    debug_log("Key params updated: d1=%d, d2=%d", d1, d2);
+    #endif
+}
+
+/**
+ * @brief 获取当前按键参数
+ * @param p_long_press 长按阈值输出指针
+ * @param p_repeat_interval 连击间隔输出指针
+ */
+void menu_get_key_params(uint8_t* p_long_press, uint8_t* p_repeat_interval) {
+    if (p_long_press) {
+        *p_long_press = d1;
+    }
+    if (p_repeat_interval) {
+        *p_repeat_interval = d2;
+    }
+}
+
+// ==================== 保持与原有代码完全兼容的参数 ====================
+// 注意：以下参数名称和值必须保持不变，确保与其他模块的兼容性
+
+int8_t Speed_Factor = 12;    /**< 光标动画速度系数，原值12 */
+float  Roll_Speed = 1.3;     /**< 滚动动画速度系数，原值1.3 */
+
+// ==================== 使用示例和注意事项 ====================
+
+/**
+ * 典型使用方式：
+ *
+ * // 在主循环中定期调用（建议5-10ms周期）
+ * while (1) {
+ *     // 检测滚动事件
+ *     int8_t roll_event = menu_Roll_event();
+ *     if (roll_event == 1) {
+ *         // 处理向下滚动
+ *         move_cursor_down();
+ *     } else if (roll_event == -1) {
+ *         // 处理向上滚动
+ *         move_cursor_up();
+ *     }
+ *
+ *     // 检测确认事件
+ *     int8_t enter_event = menu_Enter_event();
+ *     if (enter_event == 1) {
+ *         // 处理短按确认
+ *         execute_selection();
+ *     } else if (enter_event == 2) {
+ *         // 处理长按确认
+ *         show_context_menu();
+ *     }
+ *
+ *     // 其他系统任务
+ *     delay_ms(5); // 保持稳定的调用周期
+ * }
+ *
+ * 注意事项：
+ * 1. 确保GPIO已正确配置为上拉/下拉输入模式
+ * 2. 确保调用周期稳定，否则会影响长按时间判断
+ * 3. 在系统复位或模式切换时调用menu_reset_all_keys()
+ * 4. 如果硬件按键电平与代码判断相反，需要修改get_key_state()函数
+ */
+
+// ==================== 硬件配置检查清单 ====================
+/**
+ * 请确认以下硬件配置：
+ *
+ * 1. 下拨键（PA0）：
+ *    - 连接方式：按下时输出高电平？低电平？
+ *    - 上拉/下拉电阻配置
+ *
+ * 2. 上拨键（PC13）：
+ *    - STM32内置用户按键，通常是按下=低电平
+ *    - 原代码使用高电平判断，需要确认是否外接了上拉电阻
+ *
+ * 3. 确认键（PA1）：
+ *    - 连接方式：按下时输出高电平？低电平？
+ *    - 上拉/下拉电阻配置
+ *
+ * 如果电平判断相反，修改get_key_state()函数：
+ *    原：return (GPIO_ReadInputDataBit(gpio_port, gpio_pin) == Bit_SET) ? 1 : 0;
+ *    改为：return (GPIO_ReadInputDataBit(gpio_port, gpio_pin) == Bit_RESET) ? 1 : 0;
+ */
 /**
   * 函    数：主菜单1
   * 参    数：无
@@ -483,7 +940,7 @@ void run_menu1(struct option_class1* option)
 	/**********************************************************/
 	
 		Time_page_small_Timer(0,0);	
-		Time_page_BAT(-6,8);//这里可能会提示警告，可以不管它	
+		Time_page_BAT(-6,8);//这里可能会提示警告，可以不管它
 		
 	/**********************************************************/
 		int Numtemp1,Numtemp2;

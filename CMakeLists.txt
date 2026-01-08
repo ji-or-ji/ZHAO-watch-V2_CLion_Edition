@@ -77,6 +77,8 @@ add_link_options(
 # 启动文件 (汇编)
 set(STARTUP_ASM_SRCS
         Libraries/Startup/startup_stm32f10x_md.s
+        Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h
+        User/main.c
 )
 
 # 标准外设库源文件 (按需添加，避免编译未使用的驱动以节省时间)
@@ -89,6 +91,10 @@ set(CMSIS_SRCS
         Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f10x.c
         Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f10x.h
         Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h
+        Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h
+        Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h
+        User/main.c
+        User/main.c
 )
 
 # 用户与应用代码 (递归收集所有 .c 文件)
@@ -106,6 +112,8 @@ add_executable(${PROJECT_NAME}
         ${CMSIS_SRCS}
         ${STD_PERIPH_SRCS}
         ${USER_SRCS}
+        Drivers/STM32F10x_StdPeriph_Driver/inc/AD.h
+        User/main.c
 )
 
 # ==================== 后续步骤：生成十六进制、二进制文件 ====================
