@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/CMakeLists.txt" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f10x.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f10x.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Drivers/STM32F10x_StdPeriph_Driver/inc/OLED_Data.c" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/User/main.c" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/User/stm32f10x_conf.h" charset="UTF-8" />
   </component>
