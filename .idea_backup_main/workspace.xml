@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2c6f5386-718b-4674-8b12-b1a96b741792" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/README.en.md" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="develop" />
+              </list>
+            </value>
+          </entry>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="main/master" />
+                <branch-info repo="$PROJECT_DIR$" source="main/main" />
+                <branch-info repo="$PROJECT_DIR$" source="main/develop" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f10x.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Libraries/Start/startup_stm32f10x_cl.s" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="E7Wm2m94" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2025" />
+    <option name="minorVersion" value="2.5" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="37bnZwrabvmlnvXSB1G1hZjw4SC" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;C/C++ 文件.main.c.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.untitled.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 调试.Ultra-thin-ZHAO-Watch.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;<工作目录>/Ultra-thin-ZHAO-watch-V2/User&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="<工作目录>\Ultra-thin-ZHAO-watch-V2\User" />
+      <recent name="<工作目录>\Ultra-thin-ZHAO-watch-V2\Drivers\CMSIS\Device\ST\STM32F1xx\Source\Templates" />
+      <recent name="<工作目录>\Ultra-thin-ZHAO-watch-V2\Libraries" />
+      <recent name="<工作目录>\Ultra-thin-ZHAO-watch-V2" />
+      <recent name="<工作目录>\Ultra-thin-ZHAO-watch-V2\Drivers\STM32F10x_StdPeriph_Driver\inc" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="<工作目录>\Ultra-thin-ZHAO-watch-V2" />
+    </key>
+  </component>
+  <component name="RunManager" selected="C/C++ 文件.main.c">
+    <configuration name="Ultra-thin-ZHAO-Watch" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory" temporary="true">
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="main.c" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Ultra-thin-ZHAO-watch-V2" TARGET_NAME="main.c" CONFIG_NAME="main.c">
+      <option name="sourceFile" value="User\main.c" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Debug (OpenOCD)" type="com.jetbrains.cidr.embedded.openocd.conf.type" factoryName="com.jetbrains.cidr.embedded.openocd.conf.factory" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" version="1">
+      <openocd version="1" gdb-port="3333" telnet-port="4444" board-config="<工作目录>\Ultra-thin-ZHAO-watch-V2\.clion-openocd.cfg" reset-type="INIT" download-type="UPDATED_ONLY">
+        <debugger kind="GDB" isBundled="true" />
+      </openocd>
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="C/C++ 文件.main.c" />
+      <item itemvalue="CMake 调试.Ultra-thin-ZHAO-Watch" />
+      <item itemvalue="OpenOCD 下载并运行.Debug (OpenOCD)" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="C/C++ 文件.main.c" />
+        <item itemvalue="CMake 调试.Ultra-thin-ZHAO-Watch" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="2c6f5386-718b-4674-8b12-b1a96b741792" name="更改" comment="" />
+      <created>1767180697759</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767180697759</updated>
+      <workItem from="1767180699169" duration="634000" />
+      <workItem from="1767181352854" duration="1405000" />
+      <workItem from="1767787758344" duration="587000" />
+      <workItem from="1767788570516" duration="7276000" />
+      <workItem from="1767798602658" duration="8706000" />
+      <workItem from="1767869445258" duration="5460000" />
+      <workItem from="1768193327954" duration="653000" />
+    </task>
+    <task id="LOCAL-00001" summary="还是初始化，启用对于UTF-8的环境">
+      <option name="closed" value="true" />
+      <created>1767788672514</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1767788672514</updated>
+    </task>
+    <task id="LOCAL-00002" summary="还是初始化，启用对于UTF-8的环境">
+      <option name="closed" value="true" />
+      <created>1767788754495</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1767788754495</updated>
+    </task>
+    <task id="LOCAL-00003" summary="还是初始化，启用对于UTF-8的环境">
+      <option name="closed" value="true" />
+      <created>1767799553060</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1767799553060</updated>
+    </task>
+    <task id="LOCAL-00004" summary="还是初始化，启用对于UTF-8的环境">
+      <option name="closed" value="true" />
+      <created>1767883756179</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1767883756179</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main/develop" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main/main" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main/master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="*" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="parent">
+                    <value>
+                      <list>
+                        <option value="0" />
+                        <option value="1" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="GRAPH_OPTIONS">
+                <list>
+                  <option value="Base" />
+                  <option value="Standard" />
+                </list>
+              </option>
+              <option name="LONG_EDGES_VISIBLE" value="true" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="还是初始化，启用对于UTF-8的环境" />
+    <option name="LAST_COMMIT_MESSAGE" value="还是初始化，启用对于UTF-8的环境" />
+  </component>
+</project>
