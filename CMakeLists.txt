@@ -77,7 +77,7 @@ endif()
 # ==================== 收集所有源文件 ====================
 # 启动文件
 set(STARTUP_ASM_SRCS
-        Libraries/Startup/startup_stm32f10x_md.s
+        Libraries/Startup/startup_stm32f10x_md.S
 )
 
 # CMSIS 系统文件
