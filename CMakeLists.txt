@@ -1,70 +1,63 @@
 cmake_minimum_required(VERSION 3.20)
+
+# ========== 交叉编译设置==========
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR cortex-m3)
+
+# 阻止 CMake 在编译器检测时尝试链接可执行文件
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+# 强制生成 .elf 文件，避免 .exe 后缀
+set(CMAKE_EXECUTABLE_SUFFIX ".elf")
+
+# ========== 项目定义 ==========
 project(Ultra-thin-ZHAO-Watch-V2 C ASM)
 
-# ==================== 工具链设置 ====================
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR ARM)
-
+# ==================== 工具链路径（保留供自定义命令使用）====================
 if(WIN32)
-    # Windows 上的工具链路径
     set(TOOLCHAIN_PATH "D:/Program Files/GNU Arm Embedded Toolchain/10 2021.10/bin")
-#    set(EXE_SUFFIX ".exe")
 else()
-    # Linux/Mac 上的路径
-set(TOOLCHAIN_PATH "/usr/local/gcc-arm-none-eabi/bin")
-    set(EXE_SUFFIX "")
+    set(TOOLCHAIN_PATH "/usr/local/gcc-arm-none-eabi/bin")
 endif()
 
-set(CMAKE_C_COMPILER   "${TOOLCHAIN_PATH}/arm-none-eabi-gcc${EXE_SUFFIX}")
-set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH}/arm-none-eabi-g++${EXE_SUFFIX}")
-set(CMAKE_ASM_COMPILER "${TOOLCHAIN_PATH}/arm-none-eabi-gcc${EXE_SUFFIX}")
-set(CMAKE_OBJCOPY      "${TOOLCHAIN_PATH}/arm-none-eabi-objcopy${EXE_SUFFIX}")
-set(CMAKE_OBJDUMP      "${TOOLCHAIN_PATH}/arm-none-eabi-objdump${EXE_SUFFIX}")
-set(CMAKE_SIZE         "${TOOLCHAIN_PATH}/arm-none-eabi-size${EXE_SUFFIX}")
+# objcopy/size 等工具仍需要手动指定路径
+set(CMAKE_OBJCOPY "${TOOLCHAIN_PATH}/arm-none-eabi-objcopy.exe")
+set(CMAKE_OBJDUMP "${TOOLCHAIN_PATH}/arm-none-eabi-objdump.exe")
+set(CMAKE_SIZE   "${TOOLCHAIN_PATH}/arm-none-eabi-size.exe")
 
 # ==================== 关键宏定义与编译选项 ====================
-# 对于STM32F103C8T6（中容量设备），需要定义：
-# 1. STM32F103xB - 设备系列定义
-# 2. USE_STDPERIPH_DRIVER - 使用标准外设库
-# 3. STM32F10X_MD - 中容量设备（必须）
 add_compile_definitions(
         STM32F103xB
-        STM32F10X_MD  # 这是关键！中容量设备定义
+        STM32F10X_MD
         USE_STDPERIPH_DRIVER
-        HSE_VALUE=8000000  # 外部晶振频率，根据实际硬件设置
+        HSE_VALUE=8000000
 )
 
 add_compile_options(
         -mcpu=cortex-m3
         -mthumb
         -mfloat-abi=soft
-        -Og
+        -Os
         -g
         -gdwarf-2
-        # 代码生成选项
         -ffunction-sections
         -fdata-sections
         -Wall
         -Wextra
-        # 特殊处理
         -fno-common
         -fstack-usage
 )
 
 # ==================== 包含路径 ====================
 include_directories(
-        # 用户代码目录
         User
         System
         APPdata
         MPU6050
-        # 自定义驱动头文件目录
         Drivers/STM32F10x_StdPeriph_Driver/inc
         Drivers/STM32F10x_StdPeriph_Driver/src
-        # CMSIS核心文件 - 这些路径必须正确
-        Drivers/CMSIS/Include  # core_cm3.h 应该在这里
+        Drivers/CMSIS/Include
         Drivers/CMSIS/Device/ST/STM32F1xx/Include
-        # Startup目录（包含core_cm3.h的备份位置）
         Libraries/Startup
 )
 
@@ -75,17 +68,14 @@ if(NOT EXISTS ${LINKER_SCRIPT})
 endif()
 
 # ==================== 收集所有源文件 ====================
-# 启动文件
 set(STARTUP_ASM_SRCS
         Libraries/Startup/startup_stm32f10x_md.S
 )
 
-# CMSIS 系统文件
 set(CMSIS_SRCS
         Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f10x.c
 )
 
-# 标准外设库源文件（选择性添加）
 set(STD_PERIPH_SRCS
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
@@ -94,10 +84,11 @@ set(STD_PERIPH_SRCS
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c
         Drivers/STM32F10x_StdPeriph_Driver/src/misc.c
-        # 根据需要添加其他外设驱动
-)
+        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c
+        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c
+        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c
+        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c)
 
-# 用户自定义驱动（位于StdPeriph_Driver/inc目录下的.c文件）
 set(USER_DRIVER_SRCS
         Drivers/STM32F10x_StdPeriph_Driver/inc/AD.c
         Drivers/STM32F10x_StdPeriph_Driver/inc/Key.c
@@ -108,32 +99,26 @@ set(USER_DRIVER_SRCS
         Drivers/STM32F10x_StdPeriph_Driver/inc/menu_Data.c
 )
 
-# 系统文件
 set(SYSTEM_SRCS
         System/Delay.c
         System/MyRTC.c
         System/Serial2.c
         System/stm32_power.c
         System/Timer.c
-        # 添加其他系统文件
 )
 
-# 应用文件
 set(APP_SRCS
         APPdata/AHT20.c
         APPdata/ASR_su_21t.c
         APPdata/CH7800play.c
         APPdata/RF_Ev1527.c
-        # 添加其他应用文件
 )
 
-# MPU6050驱动
 set(MPU6050_SRCS
         MPU6050/MPU6050.c
         MPU6050/MyI2C.c
 )
 
-# 用户主文件
 set(USER_SRCS
         User/main.c
         User/stm32f10x_it.c
@@ -151,6 +136,13 @@ add_executable(${PROJECT_NAME}
         ${USER_SRCS}
 )
 
+# ==================== 强制清除 Windows 目标属性 ====================
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE FALSE
+        SUFFIX ".elf"
+        PREFIX ""
+)
+
 # ==================== 链接选项 ====================
 target_link_options(${PROJECT_NAME} PRIVATE
         -T ${LINKER_SCRIPT}
@@ -163,8 +155,9 @@ target_link_options(${PROJECT_NAME} PRIVATE
         -Wl,--print-memory-usage
         -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map
         -static
-        -u _printf_float
-        -u _scanf_float
+        "LINKER:-u,_printf_float"
+        "LINKER:-u,_scanf_float"
+        -lm
 )
 
 # ==================== 生成十六进制、二进制文件 ====================

@@ -1,6 +1,6 @@
 #include <string.h>
 #include <math.h>
-#include "menu.h" 
+#include "menu.h"
 #include "Delay.h"
 #include "OLED.h"
 #include "AD.h"

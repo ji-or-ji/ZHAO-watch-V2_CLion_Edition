@@ -1,6 +1,6 @@
 #include "Time_page.h"
 #include "stm32f10x.h"               
-#include "OLED.h"     
+#include "OLED.h"
 #include "MyRTC.h"
 #include "menu.h"
 #include "AD.h"
