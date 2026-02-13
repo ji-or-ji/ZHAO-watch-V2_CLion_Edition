@@ -505,7 +505,7 @@ void main_menu1(void)
 		
 	};
 	
-	run_menu1(option_list);  //将参数载入菜单1函数刷新显示
+	run_menu1(option_list);  //将参数载入菜单第1函数刷新显示
 }
 
 /**
