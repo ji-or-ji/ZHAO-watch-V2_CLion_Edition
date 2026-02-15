@@ -42,8 +42,19 @@ SECTIONS
         . = ALIGN(4);
     } >FLASH
 
+    /* ARM 异常处理表（新增） */
+    .ARM.exidx :
+    {
+        . = ALIGN(4);
+        *(.ARM.exidx*)
+        . = ALIGN(4);
+    } >FLASH
+
+    /* 只读段结束地址（用于 .data 的 LMA） */
+    _eronly = .;
+
     /* 初始化数据（在Flash中，上电拷贝到RAM） */
-    .data : AT (_etext)
+    .data : AT (_eronly)
     {
         . = ALIGN(4);
         _sdata = .;
@@ -65,6 +76,13 @@ SECTIONS
         _ebss = .;
     } >RAM
 
-    /* 用户堆栈设置 */
-    _stack_top = ORIGIN(RAM) + LENGTH(RAM);
+    /* 堆结束符号（用于 sbrk） */
+    _end = .;
+    PROVIDE(end = .);          /* 新增：定义 end 符号 */
+
+    /* 栈顶地址 */
+    _estack = ORIGIN(RAM) + LENGTH(RAM);
+
+    /* 新增：定义 _sidata 符号，指向 .data 在 Flash 中的起始地址 */
+    _sidata = LOADADDR(.data);
 }

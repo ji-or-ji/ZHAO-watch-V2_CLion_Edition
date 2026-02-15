@@ -4,18 +4,17 @@
 #include "OLED.h"     
 #include "Delay.h"  
 #include "menu.h"
-
 #include "Time_page.h"
 
 
-float RTI = 9.471;  //电阻分压系数
+float RTI = 9.471f;  //电阻分压系数
 extern  float VIN ;
 
 //电压检测
 void voltage_mt(void)
 {	
-	
-	int8_t p ,i;
+
+	int8_t p ,i = 0;
 	GUODUsn=1;
 	
 	float voltage;
@@ -258,7 +257,8 @@ void voltage_waveform(void)
 		
 		OLED_DrawLine(26,0,26,63);OLED_DrawLine(26,0,29,0);OLED_DrawLine(26,63,29,63);
 		OLED_DrawLine(127,0,127,63);OLED_DrawLine(124,0,127,0);OLED_DrawLine(124,63,127,63);
-		OLED_DrawLine(49,0,55,0);OLED_DrawLine(49,63,55,63);OLED_DrawLine(74,0,80,0);OLED_DrawLine(74,63,80,63);OLED_DrawLine(99,0,105,0);OLED_DrawLine(99,63,105,63);
+		OLED_DrawLine(49,0,55,0);OLED_DrawLine(49,63,55,63);OLED_DrawLine(74,0,80,0);
+		OLED_DrawLine(74,63,80,63);OLED_DrawLine(99,0,105,0);OLED_DrawLine(99,63,105,63);
 		
 		for(oledx=0;oledx<100;oledx++){	if(oledi)OLED_DrawPoint(27+oledx,31);oledi=!oledi; }
 		for(oledx=0;oledx<64;oledx++) {	if(oledi)OLED_DrawPoint(52,oledx);   oledi=!oledi; }
@@ -300,7 +300,8 @@ void voltage_waveform(void)
 				case 11:OLED_ShowASCII(97,  55, "100ms", OLED_6X8);break;
 				case 12:OLED_ShowASCII(97,  55, "200ms", OLED_6X8);break;
 				case 13:OLED_ShowASCII(97,  55, "500ms", OLED_6X8);break;
-		    }			
+			default: ;
+			}
 		}	
 		 if(onkey){
 			switch(key)
@@ -313,7 +314,8 @@ void voltage_waveform(void)
 				case 6:OLED_ReverseArea(0,47,25,8);break;
 				case 7:OLED_ReverseArea(0,56,25,8);break;
 				case 8:OLED_DrawRectangle(26,0,102,64,OLED_UNFILLED);break;
-		    }
+			default: ;
+			}
 		 }
 		 else
 		 {	
@@ -327,7 +329,8 @@ void voltage_waveform(void)
 				case 6:OLED_DrawRectangle(0,47,24,8,OLED_UNFILLED);break;
 				case 7:OLED_DrawRectangle(0,56,24,8,OLED_UNFILLED);break;
 				case 8:OLED_DrawRectangle(27,1,100,62,OLED_UNFILLED);break;
-		    }	
+			default: ;
+			}
 		 }			 
 		
 		 
@@ -342,7 +345,7 @@ void voltage_waveform(void)
 		Draw_Waveform();//根据数组以及电压量程范围绘制波形图
 		
 	   
-	   OLED_Update();				
+	   OLED_Update();
        OLED_transition(1);
 	   p = menu_Roll_event();   
 	   if( p == -1){ 
@@ -357,6 +360,7 @@ void voltage_waveform(void)
 					case 6:if(Threshold_voltage<25)Threshold_voltage+=0.1;break;
 					case 7:if(RangeDOWH<25)RangeDOWH+=0.1;if(RangeDOWH>=RangeUP)RangeDOWH-=0.1;break;
 					case 8:if(WaP>0)WaP--;break;
+				default: ;
 				}	
 		   }
 		   else	key--; if(key<1)key=8;

@@ -1,9 +1,9 @@
 #include "menu.h"
 #include "sys.h"
 #include "stm32f10x.h"
-#include <math.h>
+// #include <math.h>
 #include "Time_page.h"
-#include "voltage_mea.h"
+// #include "voltage_mea.h"
 #include "AHT20.h"
 #include "Calculator.h"
 
@@ -557,7 +557,7 @@ void run_menu2(struct option_class2* option)
 	int8_t  Show_i = 0; 		 //显示起始下标
 	int8_t  Max = 0;			//选项数量
 	int8_t  Roll_Event = 0;	   //按键事件
-	uint8_t Prdl ;            //进度条单格长度 
+	uint8_t Prdl ;            //进度条单格长度
 	float  mubiao = 0 , mubiao_up = 0;   //目标进度条长度，上次进度条长度
 
 	
@@ -639,11 +639,7 @@ void run_menu2(struct option_class2* option)
 				OLED_ShowNum(98, (i* MEHE)+Show_d +6, 0, 1, OLED_6X8);
 			}
 		}
-		
-		
-		
-		
-		
+
 	/**********************************************************/
 	/*光标相关*/
 		

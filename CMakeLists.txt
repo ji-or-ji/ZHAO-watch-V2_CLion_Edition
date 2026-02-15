@@ -38,7 +38,8 @@ add_compile_options(
         -mthumb
         -mfloat-abi=soft
         -Os
-        -g
+        -flto
+        -g3
         -gdwarf-2
         -ffunction-sections
         -fdata-sections
@@ -87,7 +88,9 @@ set(STD_PERIPH_SRCS
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c
         Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c
-        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c)
+        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c
+        Drivers/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c
+)
 
 set(USER_DRIVER_SRCS
         Drivers/STM32F10x_StdPeriph_Driver/inc/AD.c
@@ -103,6 +106,7 @@ set(SYSTEM_SRCS
         System/Delay.c
         System/MyRTC.c
         System/Serial2.c
+        System/Serial3.c
         System/stm32_power.c
         System/Timer.c
 )
@@ -112,6 +116,8 @@ set(APP_SRCS
         APPdata/ASR_su_21t.c
         APPdata/CH7800play.c
         APPdata/RF_Ev1527.c
+        APPdata/calculator.c
+        APPdata/voltage_mea.c
 )
 
 set(MPU6050_SRCS
@@ -136,6 +142,9 @@ add_executable(${PROJECT_NAME}
         ${USER_SRCS}
 )
 
+# ==================== 启用数学库=======================
+target_link_libraries(${PROJECT_NAME} m)
+
 # ==================== 强制清除 Windows 目标属性 ====================
 set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE FALSE
@@ -157,7 +166,6 @@ target_link_options(${PROJECT_NAME} PRIVATE
         -static
         "LINKER:-u,_printf_float"
         "LINKER:-u,_scanf_float"
-        -lm
 )
 
 # ==================== 生成十六进制、二进制文件 ====================
