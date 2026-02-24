@@ -15,12 +15,12 @@ double subtract(double a, double b) {  return a - b;  }
 
 double multiply(double a, double b) {  return a * b;  }  
 
-double divide(double a, double b) {  
+double divide(double a, double b) {
     if (b != 0) {  
         return a / b;  
-    } else {  
-        return 0; 
-    }  
+    } else {
+        return 0;
+    }
 }  
 
 #define MAX_INPUT_LENGTH 20  
@@ -202,7 +202,7 @@ void Calculator(void)
 					case 9: key='9';break;
 					case 10: key='.';break;	
 					case 11: key='P';break; //PI
-					case 12: key='E';break;//e
+					case 12: key='E';break;//e;
 					}
 					KEYstate=1;
 				}
@@ -226,7 +226,7 @@ void Calculator(void)
 					case 25: Computing=6;break;
 					case 26: Computing=7;break;
 					case 27: Computing=8;break;
-					case 28: Computing=9;break;					
+					case 28: Computing=9;break;
 					case 29: Computing=10;break;
 					case 30: Computing=11;break;
 					case 31: Computing=15;break;

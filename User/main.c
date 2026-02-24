@@ -126,7 +126,8 @@ do_work();                                                         //真的开�
 
 	extern uint8_t RAWA;
 
-   while(1)
+	    // ReSharper disable once CppDFAEndlessLoop
+	    while(1)
    {
 
 

@@ -14,11 +14,11 @@ set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 project(Ultra-thin-ZHAO-Watch-V2 C ASM)
 
 # ==================== 工具链路径（保留供自定义命令使用）====================
-if(WIN32)
-    set(TOOLCHAIN_PATH "D:/Program Files/GNU Arm Embedded Toolchain/10 2021.10/bin")
-else()
-    set(TOOLCHAIN_PATH "/usr/local/gcc-arm-none-eabi/bin")
-endif()
+#if(WIN32)
+、set(TOOLCHAIN_PATH "D:/Program Files/GNU Arm Embedded Toolchain/10 2021.10/bin")
+#else()
+#    set(TOOLCHAIN_PATH "/usr/local/gcc-arm-none-eabi/bin")
+#endif()
 
 # objcopy/size 等工具仍需要手动指定路径
 set(CMAKE_OBJCOPY "${TOOLCHAIN_PATH}/arm-none-eabi-objcopy.exe")
@@ -164,8 +164,8 @@ target_link_options(${PROJECT_NAME} PRIVATE
         -Wl,--print-memory-usage
         -Wl,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map
         -static
-        "LINKER:-u,_printf_float"
-        "LINKER:-u,_scanf_float"
+#        "LINKER:-u,_printf_float"
+#        "LINKER:-u,_scanf_float"
 )
 
 # ==================== 生成十六进制、二进制文件 ====================
