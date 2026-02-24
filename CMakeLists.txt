@@ -15,7 +15,7 @@ project(Ultra-thin-ZHAO-Watch-V2 C ASM)
 
 # ==================== 工具链路径（保留供自定义命令使用）====================
 #if(WIN32)
-、set(TOOLCHAIN_PATH "D:/Program Files/GNU Arm Embedded Toolchain/10 2021.10/bin")
+set(TOOLCHAIN_PATH "D:/Program Files/GNU Arm Embedded Toolchain/10 2021.10/bin")
 #else()
 #    set(TOOLCHAIN_PATH "/usr/local/gcc-arm-none-eabi/bin")
 #endif()
