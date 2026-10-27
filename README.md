@@ -1,8 +1,19 @@
 # 超薄版 ZHAO-Watch V2 · CLion 版
 
-一块自己画的 STM32 手表。原版是 Keil µVision5 工程，这里保留业务代码，把构建与调试链路换成 CLion + CMake + OpenOCD，方便在现代化环境里继续改。
+一块开源的 STM32 手表。固件来自 B 站 UP 主「时光久泽」的 ZHAO-Watch 项目，本仓库把这份 Keil µVision5 工程迁到 CLion + CMake + OpenOCD，并配套超薄版（L 型主板）的硬件改动。
 
-上游项目：[立创开源 · sgxn/ZHAO-Watch](https://oshwhub.com/sgxn/ZHAO-Watch)（GPL-3.0）。原始演示视频在 [B 站 BV1ob4deyEc6](https://www.bilibili.com/video/BV1ob4deyEc6/)。
+> **固件主体不是本项目原创。** 原作者是 [时光久泽](https://space.bilibili.com/1770356056)，原项目按 GPL-3.0 开源。这里做的改造以构建系统与工程结构为主，业务逻辑尽量保持原样。
+
+## 来源
+
+| 出处 | 链接 |
+| :-- | :-- |
+| 作者 B 站空间 | <https://space.bilibili.com/1770356056> |
+| 演示视频 | [BV1ob4deyEc6](https://www.bilibili.com/video/BV1ob4deyEc6/)（2024-09-15） |
+| 立创开源工程 | [oshwhub.com/sgxn/ZHAO-Watch](https://oshwhub.com/sgxn/ZHAO-Watch) |
+| 作者网盘 | 视频简介里有 123 云盘链接，含源码压缩包 |
+
+原项目发表于 2024 年 9 月，GPL-3.0。作者的 GitHub 仓库当时标注「整理中」，所以早期源码主要走网盘分发。
 
 V2 的硬件改动是把主板重构成 L 型以减小厚度，工程随之迁到 CMake。
 
@@ -130,6 +141,10 @@ openocd -f interface/stlink.cfg -f target/stm32f1x.cfg \
 
 同文件里还有一组 `battery_voltage` / `battery_level` 对照表，把电压映射成电量百分比，觉得曲线不合适也可以改。
 
+## 排障
+
+**屏幕闪屏**：原作者在视频简介里给的办法，把 `OLED.c` 中 `OLED_Init()` 里 `0xd5` 命令后面那个参数改成 `0x80`。
+
 ## 已知状态
 
 - 秒表、闹钟是占位，还没实现
@@ -139,4 +154,4 @@ openocd -f interface/stlink.cfg -f target/stm32f1x.cfg \
 
 ## 许可
 
-GPL-3.0，继承上游项目。见 [LICENSE](LICENSE)。
+GPL-3.0。固件主体版权归原作者 [时光久泽](https://space.bilibili.com/1770356056) 所有，本项目沿用同一协议。见 [LICENSE](LICENSE)。
